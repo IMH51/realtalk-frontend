@@ -1,0 +1,35 @@
+body {
+  background-color: rgb(242,138,50)	;
+}
+
+#header-img {
+  display: block;
+  float: left;
+  left: 2%;
+  width: 20vw;
+}
+
+#chats-menu {
+  background-color: red;
+  display: inline;
+  float: left;
+  width: 20vw;
+  height: 70vh;
+}
+
+#messages-window {
+  background-color: green;
+  display: inline;
+  float: left;
+  width: 20vw;
+  height: 70vh;
+}
+
+#message-input-box {
+  background-color: yellow;
+  /* display: inline; */
+  /* position: relative; */
+  float: left;
+  width: 20vw;
+  height: 70vh;
+}
