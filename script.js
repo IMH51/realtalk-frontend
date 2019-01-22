@@ -1,20 +1,33 @@
 const baseUrl = 'http://localhost:3000/'
 const usernameInput = document.querySelector("#username-input")
+const imageInput = document.querySelector("#image-input")
+const baseUrl = "http://localhost:3000"
+
 
 const state = {
-  user_id: null,
-  name: null,
-  chats: null,
+  users: null,
+  current_user: {
+    user_id: null,
+    name: null,
+    url: null,
+    chats: null
+  }
 }
 
 loginSetup = () => {
+  fetch(baseUrl + "/users")
+    .then(response => response.json())
+    .then(data => state.users = data)
   const loginForm = document.querySelector("#login-form")
   loginForm.addEventListener("submit", logUserIn)
 }
 
 logUserIn = (event) => {
-  const userName = usernameInput.value)
-  if ()
+  state.current_user. = usernameInput.value
+  const profilePicture = imageInput.value
+  const user =
+  if () {
+  }
 }
 
 

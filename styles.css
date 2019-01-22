@@ -1,35 +1,204 @@
+* {
+  font-family: sans-serif;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
 body {
-  background-color: rgb(242,138,50)	;
+  background-color: #fe8307;
 }
 
-#header-img {
+.main_container {
+  display: flex;
+  height: 100vh;
+}
+
+#login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #fe8307;
+}
+
+#login-image-container {
   display: block;
-  float: left;
-  left: 2%;
-  width: 20vw;
+
 }
 
-#chats-menu {
-  background-color: red;
-  display: inline;
-  float: left;
-  width: 20vw;
-  height: 70vh;
+#login-header-img {
+  width: 50vw;
+  height: 50vh;
 }
 
-#messages-window {
+#login-form {
+  background-color: #fe8307;
+  align-items: center;
+  justify-content: center;
+}
+
+#login-submit {
+
+}
+
+.sidebar {
+  width: 20vw;
+  min-width: 300px;
+  max-width: 600px;
+  padding: 1em;
+  background-color: #fff;
+}
+
+.sidebar .logo {
+  overflow: hidden;
+  height: 80px;
+  position: relative;
+
+}
+
+.sidebar .logo img {
+  height: 250%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-47%, -50%);
+}
+
+.sidebar ul {
+  padding: 0;
+  list-style: none;
+}
+
+.sidebar ul li {
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 2px solid #fff;
+  transition: .2s;
+  border-radius: 5px;
+}
+
+.sidebar ul li.active_user {
+  background-color: #fe8307;
+  border: 2px solid #fe8307;
+  color: #fff;
+  border-radius: 5px;
+}
+
+.sidebar ul li:hover {
+  border: 2px solid #fe8307;
+  cursor: pointer;
+}
+
+.content {
+  height: 100vh;
+  padding: 30px 15px;
+  flex: 1 1 auto;
+  background-color: #fe8307;
+  overflow: hidden;
+}
+
+.content .messages {
+  padding: 20px 10px;
+  height: calc(75vh - 15px);
+  margin: 0 auto;
+  list-style: none;
+  background-color: #fff;
+  width: 93.3%;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+}
+
+.content .messages .message {
+  margin: 5px;
+  padding: 5px 10px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.content .messages .message .message_usr_image {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: pink;
+}
+
+.content .messages .message .message_text {
+  margin: 0;
+  max-width: 55%;
   background-color: green;
-  display: inline;
-  float: left;
-  width: 20vw;
-  height: 70vh;
+  display: inline-block;
+  padding: 10px;
+  border-radius: 5px;
+}
+.content .messages .sender_message {
+  display: flex;
+  flex-direction: row-reverse;
 }
 
-#message-input-box {
-  background-color: yellow;
-  /* display: inline; */
-  /* position: relative; */
-  float: left;
-  width: 20vw;
-  height: 70vh;
+.content .messages .sender_message .message_text {
+  background-color: #fe8307;
+  color: #fff;
+  margin-right: 20px;
+}
+
+.content .messages .receiver_message .message_text {
+  background-color: #eee;
+  color: #fe8307;
+  margin-left: 20px;
+}
+
+.content .new_message {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  padding: 10px;
+  height: calc(25vh - 15px);
+  padding: 20px 10px 0;
+}
+
+.content .new_message label {
+  height: 70%;
+  width: 70%;
+}
+
+.content .new_message label textarea {
+  padding: 10px;
+  height: 100%;
+  width: 100%;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  resize: none;
+  outline: none;
+}
+
+.content .new_message label textarea:active,
+.content .new_message label textarea:focus {
+  border-color: #fe8307;
+}
+
+.content .new_message button {
+  height: 35%;
+  width: 20%;
+  position: relative;
+  border-radius: 5px;
+  border: 3px solid #fff;
+  background-color: #fe8307;
+  overflow: hidden;
+  transition: .3s;
+  outline: none;
+}
+
+.content .new_message button:hover {
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.content .new_message button img {
+  width: 30%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-57%, -50%);
 }
