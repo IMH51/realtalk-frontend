@@ -25,11 +25,13 @@ body {
 
 #login-image-container {
   display: block;
+}
 
+#login-info-span {
+  align: center;
 }
 
 #login-header-img {
-  width: 50vw;
   height: 50vh;
 }
 
@@ -39,8 +41,13 @@ body {
   justify-content: center;
 }
 
-#login-submit {
+#image-input {
+  margin: 1.5vw 3vh;
+  display: none;
+}
 
+#username-input {
+  margin: 1.5vw 3vh;
 }
 
 .sidebar {
@@ -77,6 +84,8 @@ body {
   border: 2px solid #fff;
   transition: .2s;
   border-radius: 5px;
+  text-align: center;
+  font-size: 1.5em;
 }
 
 .sidebar ul li.active_user {
@@ -94,6 +103,7 @@ body {
 .content {
   height: 100vh;
   padding: 30px 15px;
+  min-width: 700px;
   flex: 1 1 auto;
   background-color: #fe8307;
   overflow: hidden;

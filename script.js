@@ -3,11 +3,27 @@ const usernameInput = document.querySelector("#username-input")
 const imageInput = document.querySelector("#image-input")
 const loginContainer = document.querySelector("#login-container")
 const mainContainer = document.querySelector(".main_container")
+const createImageButton = document.querySelector("#create-image-button")
+const userChatList = document.querySelector("#user-chat-list")
+const messageList = document.querySelector(".messages")
+const submitMessageButton = document.querySelector("#message-submit-button")
+const messageInput = document.querySelector("#create_message")
 
 const state = {
   users: null,
   current_user: null
 }
+
+toggleImageInput = (event) => {
+      event.preventDefault()
+       if(imageInput.style.display == 'none')
+          imageInput.style.display = 'block';
+       else
+          imageInput.style.display = 'none';
+    }
+
+createImageButton.addEventListener("click", toggleImageInput)
+
 
 loginSetup = () => {
   fetch(baseUrl + "/users")
@@ -45,23 +61,70 @@ openRealTalkApp = () => {
   mainContainer.style.display = "flex"
 }
 
+getAllChats = (id) => {
+  return fetch(baseUrl + "/user_chats").then(response => response.json())
+}
+
+renderMessage = (message) => {
+  let messageToRender = document.createElement("li")
+  messageToRender.classList = "message"
+  messageToRender.dataset.id = message.user_id
+  let messageUser = state.users.find(user => user.id == messageToRender.dataset.id)
+  let displayName
+  messageToRender.innerHTML = `
+    <img class="message_usr_image" src="${messageUser.url}"></img>
+    <p class="message_text">${message.content}</p>
+  `
+  if (messageToRender.dataset.id == state.current_user.id) {
+    messageToRender.classList.add("sender_message")
+
+  } else {
+    messageToRender.classList.add("receiver_message")
+  }
+  messageList.appendChild(messageToRender)
+}
+
+renderNewMessage = (event) => {
+  event.preventDefault()
+  console.log(messageInput.value)
+}
+
+renderFullChatInWindow = (event) => {
+  event.preventDefault()
+  messageList.innerHTML = ""
+  let chatToRender = state.current_user.chats.find(chat => chat.id == event.target.dataset.id)
+  chatToRender.messages.forEach(renderMessage)
+  submitMessageButton.addEventListener("click", renderNewMessage)
+}
+
+renderChatButtonInMenu = (user, chat) => {
+  let newButton = document.createElement("li")
+  newButton.innerText = user.name
+  newButton.dataset.id = chat.chat_id
+  userChatList.appendChild(newButton)
+  newButton.addEventListener("click", renderFullChatInWindow)
+}
+
 loadUserInfo = () => {
-  state.current_user.
+  state.current_user.user_chats.forEach(chat => {
+    getAllChats().then(data => {
+      let selectedChat = data.find(userChat => (userChat.chat_id === chat.chat_id) && (userChat.user_id !== state.current_user.id))
+      let otherChatUser = state.users.find(user => user.id === selectedChat.user_id)
+      renderChatButtonInMenu(otherChatUser, selectedChat)
+    })
+  })
 }
 
 logUserIn = (event) => {
   event.preventDefault()
-
   findOrCreateUser(event)
-  // loadUserInfo()
+  loadUserInfo()
   openRealTalkApp()
 }
 
-// 1 - Create Login Method :
-// - check whether a user already exists - add name validation
-// - if not, create a new user
-// - fetch all that users chat history
-// - load chats into the chat menu on the left hand side
+
+// add user picture to chat menu Window
+// display current user name and picture in sidebar
 
 // 2 - Create user drop down menu:
 //  - logged in user can choose any other user via drop down
@@ -69,25 +132,14 @@ logUserIn = (event) => {
 // - if not, create a new chat and and switch to that Window
 
 // 3 - Allow user to switch to preexisting chat
-// - if a user clicks on anyone in the left hand chat menu, their chat with that person is loaded into the message window
 // - this also adds an event listener to the input field, allowing them to add a  message to this chat
 // - this also starts the setinterval method so that the chat automatically updates
 
 // 4- Allow user to add messages to chats
 // - if a user types into the chat box and presses enter, the message is added to the current chat
+// use state for creating message object??
 
 // 5 - build setinterval refresh method
 
-// fetchChats = (id) => {
-//   fetch(baseUrl + "users/" + id).then(response => response.json())
-// }
-//
-// getJackChats = () => {
-//   fetchChats(1).then(data => {
-//     data.user_chats.forEach(chat => {
-//       fetch(baseUrl + "chats/" + chat.chat_id)
-//     })
-//   })
-// }
 
 document.onload = loginSetup()

@@ -13,11 +13,11 @@
     <img id="login-header-img" src="RealTalk-LArge.png">
     </div>
     <form id="login-form">
-      Create Profile or Log In:<br><br>
+      <span id="login-info-span" ><a id="create-image-button" href="#">Create Profile</a>
+      or Log In:</span><br>
       <input id="username-input" required type="text" name="username" value="" placeholder="User Name">
-      <br><br>
+      <br>
       <input id="image-input" type="text" name="username" value="" placeholder="Profile Picture URL">
-      <br><br>
       <input id="login-submit" type="submit" value="Start RealTalkin'">
       </form>
       </div>
@@ -26,45 +26,23 @@
         <div class="logo">
           <img src="./realtalk-large.png" alt="logo">
         </div>
-        <ul>
-          <li class="active_user">User 1</li>
+        <ul id="user-chat-list">
+          <!-- <li class="active_user">User 1</li>
           <li>User 2</li>
           <li>User 3</li>
           <li>User 4</li>
           <li>User 5</li>
-          <li>User 6</li>
+          <li>User 6</li> -->
         </ul>
       </aside>
       <main class="content">
         <ul class="messages">
-          <li class="message sender_message">
-            <div class="message_usr_image"></div>
-            <p class="message_text">message 1</p>
-          </li>
-          <li class="message receiver_message">
-            <div class="message_usr_image"></div>
-            <p class="message_text">Lorem ipsum dolor amet poke readymade +1, tbh gastropub artisan pok pok literally vice put a bird on it knausgaard before they sold out. Lo-fi subway tile mlkshk, tumeric master cleanse seitan vexillologist.</p>
-          </li>
-          <li class="message sender_message">
-            <div class="message_usr_image"></div>
-            <p class="message_text">Lorem ipsum dolor amet poke readymade +1, tbh gastropub artisan pok pok literally vice put a bird on it knausgaard before they sold out. Lo-fi subway tile mlkshk, tumeric master cleanse seitan vexillologist.
-
-</p>
-          </li>
-          <li class="message receiver_message">
-            <div class="message_usr_image"></div>
-            <p class="message_text">message 4</p>
-          </li>
-          <li class="message receiver_message">
-            <div class="message_usr_image"></div>
-            <p class="message_text">message 5</p>
-          </li>
         </ul>
         <div class="new_message">
           <label for="create_message">
             <textarea name="create_message" placeholder="Enter message here..." id="create_message"></textarea>
           </label>
-          <button>
+          <button id="message-submit-button">
             <img src="email.svg" alt="send image">
           </button>
         </div>
