@@ -9,12 +9,14 @@ body {
 }
 
 .main_container {
-  display: flex;
+  display: none;
+  /* switch between none and flex */
   height: 100vh;
 }
 
 #login-container {
   display: flex;
+  /* switch between none and flex */
   flex-direction: column;
   align-items: center;
   justify-content: center;

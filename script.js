@@ -1,17 +1,12 @@
-const baseUrl = 'http://localhost:3000/'
+const baseUrl = 'http://localhost:3000'
 const usernameInput = document.querySelector("#username-input")
 const imageInput = document.querySelector("#image-input")
-const baseUrl = "http://localhost:3000"
-
+const loginContainer = document.querySelector("#login-container")
+const mainContainer = document.querySelector(".main_container")
 
 const state = {
   users: null,
-  current_user: {
-    user_id: null,
-    name: null,
-    url: null,
-    chats: null
-  }
+  current_user: null
 }
 
 loginSetup = () => {
@@ -22,14 +17,45 @@ loginSetup = () => {
   loginForm.addEventListener("submit", logUserIn)
 }
 
-logUserIn = (event) => {
-  state.current_user. = usernameInput.value
-  const profilePicture = imageInput.value
-  const user =
-  if () {
+findOrCreateUser = (event) => {
+  let currentUser = state.users.find(user => user.name === usernameInput.value)
+  if (!currentUser) {
+    createUser().then(data => {
+      currentUser = data
+      state.users.push(currentUser)
+      state.current_user = currentUser
+    })
   }
+  state.current_user = currentUser
 }
 
+createUser = () => {
+  return fetch(baseUrl + "/users", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+      name: usernameInput.value,
+      url: imageInput.value
+    })
+  }).then(response => response.json())
+}
+
+openRealTalkApp = () => {
+  loginContainer.style.display = "none"
+  mainContainer.style.display = "flex"
+}
+
+loadUserInfo = () => {
+  state.current_user.
+}
+
+logUserIn = (event) => {
+  event.preventDefault()
+
+  findOrCreateUser(event)
+  // loadUserInfo()
+  openRealTalkApp()
+}
 
 // 1 - Create Login Method :
 // - check whether a user already exists - add name validation
