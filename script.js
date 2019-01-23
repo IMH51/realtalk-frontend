@@ -11,6 +11,7 @@ const messageInput = document.querySelector("#create_message")
 let userImage = document.querySelector(".user_image")
 let userDisplayName = document.querySelector(".user_display_name")
 let chatSearchInput = document.querySelector("#chat_search_input")
+let chatMatch
 
 const state = {
   users: null,
@@ -96,7 +97,6 @@ findUser = (event) => {
 }
 
 findChat = (foundUser) => {
-  let chatMatch
   foundUser.chats.forEach(foundChat => {
     state.current_user.chats.forEach(userChat => {
       if (foundChat.id == userChat.id){
@@ -189,7 +189,7 @@ renderFoundChatInWindow = (chatMatch, foundUser) => {
   let selectedButton = document.querySelector(`#user-chat-list li[data-id="${foundUser.id}"]`)
   // debugger
   selectedButton.id = 'active_user'
-  console.log(selectedButton)
+  messageList.scrollTo(0, messageList.scrollHeight)
 }
 
 findOrCreateNewChat = (event) => {
@@ -208,8 +208,13 @@ getAllChats = (id) => {
 renderMessage = (message) => {
   let messageToRender = document.createElement("li")
   messageToRender.classList = "message"
-  messageToRender.dataset.id = message.user_id
-  let messageUser = state.users.find(user => user.id == messageToRender.dataset.id)
+  messageToRender.setAttribute("data-id", message.user_id)
+  let messageUser = state.users.find(user => user.id == messageToRender.getAttribute("data-id"))
+// console.log('state.users:', state.users)
+//   console.log('messageToRender:', messageToRender)
+//   console.log('messageToRender.getAttribute("data-id"):', messageToRender.getAttribute("data-id"))
+  // console.log('id:', id)
+
   let displayName
   messageToRender.innerHTML = `
     <img class="message_usr_image" src="${messageUser.url}"></img>
@@ -225,18 +230,43 @@ renderMessage = (message) => {
 }
 
 renderNewMessage = (event) => {
-
   event.preventDefault()
-  console.log(messageInput.value)
+
+  const id = parseInt(event.target.getAttribute("data-id"))
+  // console.log(messageInput.value)
+  // debugger
+  let currentChat
+  return fetch(baseUrl + '/messages', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      user_id: state.current_user.id,
+      chat_id: event.currentTarget.dataset.id,
+      content: messageInput.value
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    messageInput.value = ""
+    currentChat = state.current_user.chats.find(chat => chat.id === id)
+    currentChat.messages.push(data)
+    let otherChatUserId = document.querySelector("#active_user").dataset.id
+    let otherChatUser = state.users.find(user => user.id == otherChatUserId)
+    renderFoundChatInWindow(currentChat, otherChatUser)
+  })
+  console.log('height', messageList.offsetHeight)
+  messageList.scrollHeight
 }
 
 renderFullChatInWindow = (event) => {
 
   event.preventDefault()
   messageList.innerHTML = ""
-  let chatToRender = state.current_user.chats.find(chat => chat.id == event.target.dataset.id)
+  let chatToRender = state.current_user.chats.find(chat => chat.id == event.target.getAttribute("data-id"))
   chatToRender.messages.forEach(renderMessage)
+  submitMessageButton.dataset.id = chatToRender.id
   submitMessageButton.addEventListener("click", renderNewMessage)
+  messageList.scrollTo(0, messageList.scrollHeight)
 }
 
 renderChatButtonInMenu = (user, chat) => {
@@ -245,6 +275,10 @@ renderChatButtonInMenu = (user, chat) => {
   newButton.dataset.id = chat.chat_id
   userChatList.appendChild(newButton)
   newButton.addEventListener("click", (event) => {
+    let currentButton = document.querySelector("#active_user")
+    if (currentButton) {
+      currentButton.id = ""
+    }
     newButton.id = "active_user"
     renderFullChatInWindow(event)
   })
@@ -255,9 +289,11 @@ loadUserInfo = () => {
   userDisplayName.innerText = state.current_user.name
   state.current_user.user_chats.forEach(chat => {
     getAllChats().then(data => {
-      let selectedChat = data.find(userChat => (userChat.chat_id === chat.chat_id) && (userChat.user_id !== state.current_user.id))
-      let otherChatUser = state.users.find(user => user.id === selectedChat.user_id)
+      let selectedChat = data.find(userChat => (userChat.chat_id == chat.chat_id) && (userChat.user_id !== state.current_user.id))
+      if (selectedChat) {
+      let otherChatUser = state.users.find(user => user.id == selectedChat.user_id)
       renderChatButtonInMenu(otherChatUser, selectedChat)
+      }
     })
   })
 }

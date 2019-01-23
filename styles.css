@@ -197,8 +197,9 @@ body {
   background-color: #fff;
   width: 93.3%;
   border-radius: 5px;
-  display: flex;
-  flex-direction: column;
+  /* display: flex;
+  flex-direction: column; */
+  overflow-y: scroll;
 }
 
 .content .messages .message {
@@ -288,6 +289,7 @@ body {
 }
 
 .content .new_message button img {
+  pointer-events: none;
   width: 30%;
   position: absolute;
   top: 50%;
