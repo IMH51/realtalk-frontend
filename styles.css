@@ -37,6 +37,7 @@ body {
 
 #login-form {
   background-color: #fe8307;
+
   text-align: center;
   margin: 1.5vw 3vh;
 }
@@ -44,10 +45,16 @@ body {
 #image-input {
   margin: 1.5vw 3vh;
   display: none;
+  outline: none;
+  border-radius: 6px;
+  padding: 2px;
 }
 
 #username-input {
   margin: 1.5vw 3vh;
+  outline: none;
+  border-radius: 6px;
+  padding: 2px;
 }
 
 .sidebar {
@@ -58,20 +65,84 @@ body {
   background-color: #fff;
 }
 
-.sidebar .logo {
+.sidebar .sidebar_header {
   background-color: #fe8307;
   overflow: hidden;
-  height: 80px;
+  height: 130px;
   position: relative;
-
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
 }
 
-.sidebar .logo img {
-  height: 250%;
+.sidebar .sidebar_header .logo_wrapper {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 50px;
+}
+
+.sidebar .sidebar_header .logo_wrapper img {
+  height: 550%;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-47%, -50%);
+}
+
+.sidebar .user_details {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 15px 13px;
+  border-radius: 5px;
+  position: relative;
+  height:
+}
+
+.sidebar .sidebar_header .user_details .user_image {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+.sidebar .sidebar_header .user_details p {
+  flex: 1 1 auto;
+  text-align: center;
+  font-size: 1.5em;
+  margin: 0;
+}
+
+.search_bar_wrapper input[type=text] {
+  width: 0px;
+  max-width: auto;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: white;
+  background-image: url('magnifier.png');
+  background-position: 10px 10px;
+  background-repeat: no-repeat;
+  padding: 12px 5px 12px 40px;
+  -webkit-transition: width 0.4s ease-in-out;
+  transition: width 0.4s ease-in-out;
+  margin-top: 15px;
+  color: #fe8307;
+}
+
+::placeholder {
+  color: #fe8307;
+}
+
+.search_bar_wrapper input[type=text]:focus {
+  outline: none;
+  border-color: #fe8307;
+  color: #fe8307;
+  width: 100%;
+  box-shadow: 0, 0, 5px, #fe8307;
+  border: 1px, solid, #fe8307;
 }
 
 .sidebar ul {

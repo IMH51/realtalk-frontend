@@ -8,6 +8,9 @@ const userChatList = document.querySelector("#user-chat-list")
 const messageList = document.querySelector(".messages")
 const submitMessageButton = document.querySelector("#message-submit-button")
 const messageInput = document.querySelector("#create_message")
+let userImage = document.querySelector(".user_image")
+let userDisplayName = document.querySelector(".user_display_name")
+let chatSearchInput = document.querySelector("#chat_search_input")
 
 const state = {
   users: null,
@@ -34,16 +37,23 @@ loginSetup = () => {
 }
 
 findOrCreateUser = (event) => {
-  let currentUser = state.users.find(user => user.name === usernameInput.value)
+  let currentUser = state.users.find(user => user.name == usernameInput.value)
   if (!currentUser) {
     createUser().then(data => {
       currentUser = data
       state.users.push(currentUser)
       state.current_user = currentUser
+      // userImage.src = state.current_user.url
+      // userDisplayName.innerText = state.current_user.name
+      loadUserInfo()
     })
+  } else {
+      state.current_user = currentUser
+      loadUserInfo()
+    }
   }
-  state.current_user = currentUser
-}
+  // state.current_user = currentUser
+
 
 createUser = () => {
   return fetch(baseUrl + "/users", {
@@ -59,8 +69,98 @@ createUser = () => {
 openRealTalkApp = () => {
   loginContainer.style.display = "none"
   mainContainer.style.display = "flex"
+  chatSearchInput.addEventListener('keypress', () => {
+    event.preventDefault()
+    if (event.keyCode === 13){
+      findOrCreateNewChat(event)
+    } else {
+      chatSearchInput.value += event.key
+    }
+  })
+  chatSearchInput.addEventListener('submit', findOrCreateNewChat)
+}
+/* findOrCreateNewChat */
+findUser = (event) => {
+  event.preventDefault()
+
+  let foundUser = state.users.find(user => user.name == chatSearchInput.value)
+  console.log(foundUser)
+
+    if (!foundUser) {
+      alert("User doesn't exist!")
+    }
+    else {
+      findChat(foundUser)
+    }
+    chatSearchInput.value = ""
 }
 
+findChat = (foundUser) => {
+  let chatMatch
+  foundUser.chats.forEach(foundChat => {
+    state.current_user.chats.forEach(userChat => {
+      if (foundChat.id == userChat.id){
+        chatMatch =  userChat
+        renderFoundChatInWindow(chatMatch, foundUser)
+      }
+      else {
+        createNewChat(foundUser)
+      }
+    })
+  })
+  console.log(chatMatch)
+  // if (!chatMatch){
+  //     createNewChat(foundUser)
+  // }
+  // iterating through logged users chats.
+  // for each chat, we get the id
+  //then search all user chats with the chat id and found user id.
+  // if found, call renderFullChatInWindow, and set that chat to be the activechat
+  //if not found, create a new Chat and 2 new UserChat with the same new Chat id
+  // then renderFullChatInWindow and refresh+append the chat menu with that chat as the activechat
+}
+
+/*  post requests to API */
+createNewChat = (foundUser) => {
+  let newChat
+  let currentUserChat
+  let foundUserChat
+
+  fetch(baseUrl+ '/chats', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({})
+  })
+  .then(response => response.json())
+  .then(data => newChat = data)
+
+  console.log(newChat)
+
+}
+
+/*                       */
+renderFoundChatInWindow = (chatMatch, foundUser) => {
+  messageList.innerHTML = ""
+  chatMatch.messages.forEach(renderMessage)
+  submitMessageButton.addEventListener("click", renderNewMessage)
+  let currentActiveButton = document.querySelector('#user-chat-list li#active_user')
+    if (currentActiveButton) {
+      currentActiveButton.id = ""
+    }
+  let selectedButton = document.querySelector(`#user-chat-list li[data-id="${foundUser.id}"]`)
+  debugger
+  selectedButton.id = 'active_user'
+  console.log(selectedButton)
+}
+
+findOrCreateNewChat = (event) => {
+  event.preventDefault()
+  findUser(event)
+}
+
+
+
+/* Rendering messages from the corresponding chat upon click */
 getAllChats = (id) => {
   return fetch(baseUrl + "/user_chats").then(response => response.json())
 }
@@ -85,11 +185,13 @@ renderMessage = (message) => {
 }
 
 renderNewMessage = (event) => {
+
   event.preventDefault()
   console.log(messageInput.value)
 }
 
 renderFullChatInWindow = (event) => {
+
   event.preventDefault()
   messageList.innerHTML = ""
   let chatToRender = state.current_user.chats.find(chat => chat.id == event.target.dataset.id)
@@ -109,6 +211,8 @@ renderChatButtonInMenu = (user, chat) => {
 }
 
 loadUserInfo = () => {
+  userImage.src = `${state.current_user.url}`
+  userDisplayName.innerText = state.current_user.name
   state.current_user.user_chats.forEach(chat => {
     getAllChats().then(data => {
       let selectedChat = data.find(userChat => (userChat.chat_id === chat.chat_id) && (userChat.user_id !== state.current_user.id))
@@ -121,15 +225,12 @@ loadUserInfo = () => {
 logUserIn = (event) => {
   event.preventDefault()
   findOrCreateUser(event)
-  loadUserInfo()
+  // loadUserInfo()
   openRealTalkApp()
 }
 
 
-// add user picture to chat menu Window
-// display current user name and picture in sidebar
-
-// 2 - Create user drop down menu:
+// 2 - Create chat drop down menu:
 //  - logged in user can choose any other user via drop down
 // - check if a chat for those two users already exists
 // - if not, create a new chat and and switch to that Window
