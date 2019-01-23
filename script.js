@@ -103,12 +103,12 @@ findChat = (foundUser) => {
         chatMatch =  userChat
         renderFoundChatInWindow(chatMatch, foundUser)
       }
-      else {
-        createNewChat(foundUser)
-      }
     })
   })
-  console.log(chatMatch)
+  debugger
+  createNewChat(foundUser)
+  // console.log(chatMatch)
+}
   // if (!chatMatch){
   //     createNewChat(foundUser)
   // }
@@ -118,7 +118,6 @@ findChat = (foundUser) => {
   // if found, call renderFullChatInWindow, and set that chat to be the activechat
   //if not found, create a new Chat and 2 new UserChat with the same new Chat id
   // then renderFullChatInWindow and refresh+append the chat menu with that chat as the activechat
-}
 
 /*  post requests to API */
 createNewChat = (foundUser) => {
@@ -126,19 +125,59 @@ createNewChat = (foundUser) => {
   let currentUserChat
   let foundUserChat
 
-  fetch(baseUrl+ '/chats', {
+  return fetch(baseUrl+ '/chats', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({})
   })
   .then(response => response.json())
   .then(data => newChat = data)
-
-  console.log(newChat)
-
+  .then(() => {
+    return fetch(baseUrl + '/user_chats', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        user_id: foundUser.id,
+        chat_id: newChat.id
+      })
+    })
+  })
+    .then(response => response.json())
+    .then(data => foundUserChat = data)
+      .then(() => {
+        return fetch(baseUrl + '/user_chats', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            user_id: state.current_user.id,
+            chat_id: newChat.id
+          })
+        })
+      })
+        .then(response => response.json())
+        .then(data => {
+          currentUserChat = data
+          updateWholePageWithNewChat(newChat, currentUserChat, foundUserChat, foundUser)
+        })
 }
 
 /*                       */
+
+updateWholePageWithNewChat = (newChat, currentUserChat, foundUserChat, foundUser) => {
+  state.current_user.chats.push(newChat)
+  state.current_user.user_chats.push(currentUserChat)
+  userChatList.innerHTML = ""
+  state.current_user.user_chats.forEach(chat => {
+    getAllChats().then(data => {
+      let selectedChat = data.find(userChat => (userChat.chat_id === chat.chat_id) && (userChat.user_id !== state.current_user.id))
+      let otherChatUser = state.users.find(user => user.id === selectedChat.user_id)
+      renderChatButtonInMenu(otherChatUser, selectedChat)
+    })
+  })
+  .then((newChat, foundUser) => renderFoundChatInWindow(newChat, foundUser))
+}
+
+
 renderFoundChatInWindow = (chatMatch, foundUser) => {
   messageList.innerHTML = ""
   chatMatch.messages.forEach(renderMessage)
@@ -148,7 +187,7 @@ renderFoundChatInWindow = (chatMatch, foundUser) => {
       currentActiveButton.id = ""
     }
   let selectedButton = document.querySelector(`#user-chat-list li[data-id="${foundUser.id}"]`)
-  debugger
+  // debugger
   selectedButton.id = 'active_user'
   console.log(selectedButton)
 }
@@ -157,6 +196,7 @@ findOrCreateNewChat = (event) => {
   event.preventDefault()
   findUser(event)
 }
+
 
 
 
