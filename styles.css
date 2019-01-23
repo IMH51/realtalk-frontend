@@ -27,8 +27,8 @@ body {
   display: block;
 }
 
-#login-info-span {
-  align: center;
+#login-submit {
+  margin: 1.5vw 3vh
 }
 
 #login-header-img {
@@ -37,8 +37,8 @@ body {
 
 #login-form {
   background-color: #fe8307;
-  align-items: center;
-  justify-content: center;
+  text-align: center;
+  margin: 1.5vw 3vh;
 }
 
 #image-input {
@@ -59,6 +59,7 @@ body {
 }
 
 .sidebar .logo {
+  background-color: #fe8307;
   overflow: hidden;
   height: 80px;
   position: relative;
@@ -84,11 +85,12 @@ body {
   border: 2px solid #fff;
   transition: .2s;
   border-radius: 5px;
+  justify-content: center;
   text-align: center;
   font-size: 1.5em;
 }
 
-.sidebar ul li.active_user {
+.sidebar ul li#active_user {
   background-color: #fe8307;
   border: 2px solid #fe8307;
   color: #fff;
@@ -98,6 +100,13 @@ body {
 .sidebar ul li:hover {
   border: 2px solid #fe8307;
   cursor: pointer;
+}
+
+.sidebar ul li img.message_usr_image {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  float: left;
 }
 
 .content {

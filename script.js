@@ -16,10 +16,10 @@ const state = {
 
 toggleImageInput = (event) => {
       event.preventDefault()
-       if(imageInput.style.display == 'none')
-          imageInput.style.display = 'block';
+       if(imageInput.style.display == 'block')
+          imageInput.style.display = 'none'
        else
-          imageInput.style.display = 'none';
+          imageInput.style.display = 'block'
     }
 
 createImageButton.addEventListener("click", toggleImageInput)
@@ -99,10 +99,13 @@ renderFullChatInWindow = (event) => {
 
 renderChatButtonInMenu = (user, chat) => {
   let newButton = document.createElement("li")
-  newButton.innerText = user.name
+  newButton.innerHTML = `<img class="message_usr_image" src="${user.url}"></img>${user.name}`
   newButton.dataset.id = chat.chat_id
   userChatList.appendChild(newButton)
-  newButton.addEventListener("click", renderFullChatInWindow)
+  newButton.addEventListener("click", (event) => {
+    newButton.id = "active_user"
+    renderFullChatInWindow(event)
+  })
 }
 
 loadUserInfo = () => {
