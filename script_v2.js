@@ -212,20 +212,24 @@ createNewChat = () => {
 /* This will render the existing chats in the sidebar */
 
 // getCurrentChatFromServer = (id) => {
-//   fetch(baseUrl + "/chats/" + id)
-//   .then(response => response.json())
-//   .then(data => baseChat = data.messages)
+//   return
 // }
 
 refreshChatWindow = () => {
-  // getCurrentChatFromServer(state.current_chat.id)
-  // .then()
-  if (state.current_chat){
-    if (baseChat.length != state.current_chat.messages.length) {
-      clearInterval(refreshChatWindow)
-      renderChatInWindow(state.other_chat_user.id)
-    }
-  }
+  fetch(baseUrl + "/chats/" + state.current_chat.id)
+  .then(response => response.json())
+  .then(data => {
+    baseChat = [...data.messages]
+    if (state.current_chat) {
+      if (baseChat.length != state.current_chat.messages.length) {
+        state.current_chat = JSON.parse(JSON.stringify(data))
+        console.log(state.current_chat)
+        // debugger
+        clearInterval(refreshChatWindow)
+        renderChatInWindow(event, state.other_chat_user.id)
+        }
+      }
+    })
 }
 
 renderChatButtonInMenu = (user, chat) => {
@@ -284,10 +288,12 @@ findOrCreateNewChat = (event) => {
 
 
 renderMessage = (message) => {
+  console.log("message", message)
   let messageToRender = document.createElement("li")
   messageToRender.classList = "message"
-  messageToRender.dataset.id =  message.user_id
+  messageToRender.dataset.id =  message.chat_id
   let messageUser = state.users.find(user => user.id == messageToRender.dataset.id)
+  // debugger
   messageToRender.innerHTML = `
     <img class="message_usr_image" src="${messageUser.url}"></img>
     <p class="message_text">${message.content}</p>
