@@ -189,7 +189,7 @@ createNewChat = () => {
       })
         .then(response => response.json())
         .then(data => {
-          // currentUserChat = data
+          renderChatButtonInMenu(state.other_chat_user, state.current_chat)
           renderChatInWindow(event, state.other_chat_user.id)
         })
 }
@@ -201,6 +201,11 @@ renderChatButtonInMenu = (user, chat) => {
   let newButton = document.createElement("li")
   newButton.innerHTML = `<img class="message_usr_image" src="${user.url}"></img>${user.name}`
   newButton.dataset.id = user.id
+  if ((state.other_chat_user) && user == state.other_chat_user) {
+    newButton.id = "#active_user"
+  } else {
+    newButton.id = ""
+  }
   userChatList.appendChild(newButton)
   newButton.addEventListener("click", (event) => {
     let currentButton = document.querySelector("#active_user")
@@ -214,21 +219,9 @@ renderChatButtonInMenu = (user, chat) => {
   })
 }
 
-
-//   state.current_user.chats.push(state.current_chat)
-//   state.current_user.user_chats.push(currentUserChat)
-
-
-
 renderChatInWindow = (event, id) => {
   event.preventDefault()
-  // console.log(event)
   messageList.innerHTML = ""
-  // findChat(event)
-  // state.current_chat = state.current_user.user_chats.find(chat => chat.chat_id == state.other_chat_user.user_chats.chat_id)
-  // console.log('searchinput:', )
-  // state.other_chat_user = state.users.find(user => user.id == id)
-  // debugger
     if (state.current_chat) {
       state.current_chat.messages.forEach(renderMessage)
     }
@@ -239,7 +232,6 @@ renderChatInWindow = (event, id) => {
       currentActiveButton.id = ""
     }
   let selectedButton = document.querySelector(`#user-chat-list li[data-id="${id}"]`)
-  // debugger
   selectedButton.id = 'active_user'
   messageList.scrollTo(0, messageList.scrollHeight)
 }
@@ -273,8 +265,6 @@ createNewMessage = (event) => {
   event.preventDefault()
   id = parseInt(event.currentTarget.dataset.id)
   console.log(messageInput.value, id)
-  // // debugger
-  // let currentChat
   return fetch(baseUrl + '/messages', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
