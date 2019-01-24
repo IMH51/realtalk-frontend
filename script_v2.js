@@ -146,6 +146,8 @@ findUser = (event) => {
   }
   if (!searchUserResult) {
     alert("User doesn't exist!")
+    clearInterval(refreshIntervalFunction)
+    refreshIntervalFunction = setInterval(refreshChatWindow, 500)
   } else {
     state.other_chat_user = searchUserResult
     findChat(event)
@@ -281,6 +283,7 @@ renderChatInWindow = (id) => {
   if (state.current_chat) {
   baseChat = [...state.current_chat.messages]
   }
+  messageInput.placeholder = `To message ${state.other_chat_user.name}, type your message here then click Send!`
   refreshIntervalFunction = setInterval(refreshChatWindow, 500)
 }
 
