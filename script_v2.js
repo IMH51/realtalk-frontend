@@ -23,6 +23,7 @@ let foundUserChat
 let selectedChatUser
 let allChats
 let baseChat
+let refreshIntervalFunction
 
 // State //
 //-------//
@@ -115,7 +116,7 @@ openRealTalkApp = () => {
   chatSearchInput.addEventListener('keypress', () => {
     event.preventDefault()
     if (event.keyCode === 13) {
-      clearInterval(refreshChatWindow)
+      clearInterval(refreshIntervalFunction)
       findOrCreateNewChat(event)
     } else {
       chatSearchInput.value += event.key
@@ -136,15 +137,17 @@ logUserIn = (event) => {
 /* function for search bar, checks if a user exists, if true, will run the findChat function */
 findUser = (event) => {
   event.preventDefault()
-  console.log('event', event)
+  console.log('finding user, event', event)
+  let searchUserResult
   if (chatSearchInput.value) {
-    state.other_chat_user = state.users.find(user => user.name == chatSearchInput.value)
+    searchUserResult = state.users.find(user => user.name == chatSearchInput.value)
   } else {
-    state.other_chat_user = state.users.find(user => user.name == event.target.innerText)
+    searchUserResult = state.users.find(user => user.name == event.target.innerText)
   }
-  if (!state.other_chat_user) {
+  if (!searchUserResult) {
     alert("User doesn't exist!")
   } else {
+    state.other_chat_user = searchUserResult
     findChat(event)
   }
   chatSearchInput.value = ""
@@ -225,8 +228,8 @@ refreshChatWindow = () => {
         state.current_chat = JSON.parse(JSON.stringify(data))
         console.log(state.current_chat)
         // debugger
-        clearInterval(refreshChatWindow)
-        renderChatInWindow(event, state.other_chat_user.id)
+        clearInterval(refreshIntervalFunction)
+        renderChatInWindow(state.other_chat_user.id)
         }
       }
     })
@@ -246,7 +249,7 @@ renderChatButtonInMenu = (user, chat) => {
   }
   userChatList.appendChild(newButton)
   newButton.addEventListener("click", (event, chatId) => {
-    clearInterval(refreshChatWindow)
+    clearInterval(refreshIntervalFunction)
     let currentButton = document.querySelector("#active_user")
       if (currentButton) {
         currentButton.id = ""
@@ -260,8 +263,8 @@ renderChatButtonInMenu = (user, chat) => {
 
 // findOrCreateNewChat
 
-renderChatInWindow = (event, id) => {
-  console.log(event, id)
+renderChatInWindow = (id) => {
+  console.log(id)
   messageList.innerHTML = ""
     if (state.current_chat) {
       state.current_chat.messages.forEach(renderMessage)
@@ -278,7 +281,7 @@ renderChatInWindow = (event, id) => {
   if (state.current_chat) {
   baseChat = [...state.current_chat.messages]
   }
-  setInterval(refreshChatWindow, 500)
+  refreshIntervalFunction = setInterval(refreshChatWindow, 500)
 }
 
 findOrCreateNewChat = (event) => {
@@ -291,7 +294,7 @@ renderMessage = (message) => {
   console.log("message", message)
   let messageToRender = document.createElement("li")
   messageToRender.classList = "message"
-  messageToRender.dataset.id =  message.chat_id
+  messageToRender.dataset.id =  message.user_id
   let messageUser = state.users.find(user => user.id == messageToRender.dataset.id)
   // debugger
   messageToRender.innerHTML = `
@@ -325,7 +328,7 @@ createNewMessage = (event) => {
     console.log(data)
     messageInput.value = ""
     state.current_chat.messages.push(data)
-    clearInterval(refreshChatWindow)
+    clearInterval(refreshIntervalFunction)
     renderChatInWindow(id)
   })
 }
