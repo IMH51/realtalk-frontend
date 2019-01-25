@@ -24,6 +24,7 @@ let selectedChatUser
 let allChats
 let baseChat
 let refreshIntervalFunction
+let refreshChatIntervalFunction
 
 // State //
 //-------//
@@ -92,15 +93,18 @@ getAllChats = () => fetch(baseUrl + "/user_chats").then(response => response.jso
 
 /* Updates the state with users information */
 loadUserInfo = () => {
+  userChatList.innerHTML = ""
   userImage.src = state.current_user.url
   userDisplayName.innerText = state.current_user.name
   getAndRenderChatButtons()
+  refreshChatIntervalFunction = setInterval(refreshChatButtons, 500)
   }
 
 /* Renders the chats from the api request into the sidebar menu */
 getAndRenderChatButtons = () => {
   getAllChats().then(data => {
-      allChats = data
+      allChats = ""
+      allChats = JSON.parse(JSON.stringify(data))
       state.current_user.user_chats.forEach(chat => {
         selectedChat = null
         selectedChat = allChats.find(userChat => (userChat.chat_id == chat.chat_id) && (userChat.user_id != state.current_user.id))
@@ -121,6 +125,8 @@ openRealTalkApp = () => {
     if (event.keyCode === 13) {
       clearInterval(refreshIntervalFunction)
       findOrCreateNewChat(event)
+      clearInterval(refreshChatIntervalFunction)
+      loadUserInfo()
     } else {
       chatSearchInput.value += event.key
       }
@@ -140,7 +146,6 @@ logUserIn = (event) => {
 /* function for search bar, checks if a user exists, if true, will run the findChat function */
 findUser = (event) => {
   event.preventDefault()
-  console.log('finding user, event', event)
   let searchUserResult
   if (chatSearchInput.value) {
     searchUserResult = state.users.find(user => user.name == chatSearchInput.value)
@@ -152,6 +157,10 @@ findUser = (event) => {
     if (refreshIntervalFunction) {
       clearInterval(refreshIntervalFunction)
       refreshIntervalFunction = setInterval(refreshChatWindow, 500)
+    }
+    if (refreshChatIntervalFunction) {
+      clearInterval(refreshChatIntervalFunction)
+      refreshChatIntervalFunction = setInterval(refreshChatButtons, 500)
     }
   } else {
     state.other_chat_user = searchUserResult
@@ -185,7 +194,6 @@ createNewChat = () => {
     state.current_chat = data
     state.current_user.chats.push(data)
     state.other_chat_user.chats.push(data)
-    console.log("new chat, ", data)
     })
   .then(() => {
     return fetch(baseUrl + '/user_chats', {
@@ -198,7 +206,7 @@ createNewChat = () => {
     })
   })
     .then(response => response.json())
-    .then(data => console.log("new other user chat, ", data))
+    // .then(data => console.log("new other user chat, ", data))
       .then(() => {
         return fetch(baseUrl + '/user_chats', {
           method: 'POST',
@@ -211,7 +219,6 @@ createNewChat = () => {
       })
         .then(response => response.json())
         .then(data => {
-          console.log("new current user chat, ", data)
           renderChatButtonInMenu(state.other_chat_user, state.current_chat)
           renderChatInWindow(state.other_chat_user.id)
         })
@@ -221,10 +228,6 @@ createNewChat = () => {
 
 /* This will render the existing chats in the sidebar */
 
-// getCurrentChatFromServer = (id) => {
-//   return
-// }
-
 refreshChatWindow = () => {
   fetch(baseUrl + "/chats/" + state.current_chat.id)
   .then(response => response.json())
@@ -233,13 +236,40 @@ refreshChatWindow = () => {
     if (state.current_chat) {
       if (baseChat.length != state.current_chat.messages.length) {
         state.current_chat = JSON.parse(JSON.stringify(data))
-        console.log(state.current_chat)
-        // debugger
         clearInterval(refreshIntervalFunction)
         renderChatInWindow(state.other_chat_user.id)
         }
       }
     })
+}
+
+
+refreshChatButtons = () => {
+  // debugger
+  fetch(baseUrl + "/users")
+  .then(response => response.json())
+  .then(data => state.users = JSON.parse(JSON.stringify(data)))
+  .then(() => {
+    fetch(baseUrl + "/users/" + state.current_user.id)
+  .then(response => response.json())
+  .then(data => {
+    baseUsers = ""
+    baseUsers = JSON.parse(JSON.stringify(data))
+    if (state.current_user) {
+      if (baseUsers.user_chats.length != state.current_user.user_chats.length) {
+        state.current_user = ""
+        state.current_user = JSON.parse(JSON.stringify(data))
+        clearInterval(refreshChatIntervalFunction)
+        loadUserInfo()
+        userChatList.scrollTo(0, userChatList.scrollHeight)
+        }
+      }
+      if (state.other_chat_user) {
+      let currentChatButton = document.querySelector(`#user-chat-list li[data-id="${state.other_chat_user.id}"]`)
+      currentChatButton.id = 'active_user'
+      }
+    })
+  })
 }
 
 renderChatButtonInMenu = (user, chat) => {
@@ -257,6 +287,7 @@ renderChatButtonInMenu = (user, chat) => {
   userChatList.appendChild(newButton)
   newButton.addEventListener("click", (event, chatId) => {
     clearInterval(refreshIntervalFunction)
+    clearInterval(refreshChatIntervalFunction)
     let currentButton = document.querySelector("#active_user")
       if (currentButton) {
         currentButton.id = ""
@@ -271,7 +302,6 @@ renderChatButtonInMenu = (user, chat) => {
 // findOrCreateNewChat
 
 renderChatInWindow = (id) => {
-  console.log(id)
   messageList.innerHTML = ""
     if (state.current_chat) {
       state.current_chat.messages.forEach(renderMessage)
@@ -299,12 +329,10 @@ findOrCreateNewChat = (event) => {
 
 
 renderMessage = (message) => {
-  console.log("message", message)
   let messageToRender = document.createElement("li")
   messageToRender.classList = "message"
   messageToRender.dataset.id =  message.user_id
   let messageUser = state.users.find(user => user.id == messageToRender.dataset.id)
-  // debugger
   messageToRender.innerHTML = `
     <img class="message_usr_image" src="${messageUser.url}"></img>
     <p class="message_text">${message.content}</p>
@@ -321,7 +349,6 @@ renderMessage = (message) => {
 createNewMessage = (event) => {
   event.preventDefault()
   id = parseInt(event.currentTarget.dataset.id)
-  console.log(messageInput.value, id)
   return fetch(baseUrl + '/messages', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
@@ -333,7 +360,6 @@ createNewMessage = (event) => {
   })
   .then(response => response.json())
   .then(data => {
-    console.log(data)
     messageInput.value = ""
     state.current_chat.messages.push(data)
     clearInterval(refreshIntervalFunction)
