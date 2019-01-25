@@ -61,6 +61,9 @@ findOrCreateUser = (event) => {
   currentUser = null
   currentUser = state.users.find(user => user.name == usernameInput.value)
   if (!currentUser) {
+    if (!imageInput.value) {
+      imageInput.value = "user.png"
+    }
     createUser().then(data => {
       state.current_user = data
       state.users.push(data)
@@ -146,8 +149,10 @@ findUser = (event) => {
   }
   if (!searchUserResult) {
     alert("User doesn't exist!")
-    clearInterval(refreshIntervalFunction)
-    refreshIntervalFunction = setInterval(refreshChatWindow, 500)
+    if (refreshIntervalFunction) {
+      clearInterval(refreshIntervalFunction)
+      refreshIntervalFunction = setInterval(refreshChatWindow, 500)
+    }
   } else {
     state.other_chat_user = searchUserResult
     findChat(event)
