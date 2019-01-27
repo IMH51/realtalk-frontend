@@ -63,7 +63,7 @@ findOrCreateUser = (event) => {
   currentUser = state.users.find(user => user.name == usernameInput.value)
   if (!currentUser) {
     if (!imageInput.value) {
-      imageInput.value = "user.png"
+      imageInput.value = "images/user.png"
     }
     createUser().then(data => {
       state.current_user = data
