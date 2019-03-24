@@ -20,4 +20,4 @@ Whilst there are plenty of existing technologies that we could have used to buil
 
 -----------------
 
-![RealTalk Chat App Example Screnshot](images/realtalk-screenshot.png)
+![RealTalk Chat App Example Screenshot](images/realtalk-screenshot.png)
