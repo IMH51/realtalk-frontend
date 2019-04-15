@@ -1,5 +1,7 @@
 # Realtalk - A Javascript webchat app with a Rails API backend!
 
+[Video Demo](https://www.youtube.com/watch?v=PpVr8HZXb6I)
+
 RealTalk was built as a Module 3 Project at Flatiron School in collaboration with [Lingy94](http://github.com/Lingy94). The brief was to build a web app with a Rails API backend and a Javscript based frontend without using any JS libraries. The backend Rails API is hosted [here](https://github.com/Lingy94/realtalk-server)
 
 Users can create a basic account with a profile picture, search for other existing RealTalk users and start chats with them. If two users run this frontend on two separate browsers and both connect to the same instance of the API server they will be able to talk to each other in real time.
